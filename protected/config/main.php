@@ -5,9 +5,11 @@
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
+Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'YiiShop',
+	'language' => 'zh_cn',//语言翻译成中文
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -17,6 +19,8 @@ return array(
 		'application.models.*',
 		'application.components.*',
 	),
+
+	'theme'=>'bootstrap', // requires you to copy the theme under your themes directory
 
 	'modules'=>array(
 		// uncomment the following to enable the Gii tool
@@ -80,6 +84,10 @@ return array(
 		),
 
 		'cache' => array('class' => 'system.caching.CDummyCache'),
+
+		'bootstrap'=>array(
+				'class'=>'bootstrap.components.Bootstrap',
+			),
 		/*
 		'db'=>array(
 			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
