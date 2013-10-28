@@ -7,7 +7,7 @@
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'My Web Application',
+	'name'=>'YiiShop',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -20,24 +20,56 @@ return array(
 
 	'modules'=>array(
 		// uncomment the following to enable the Gii tool
-		/*
 		'gii'=>array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'Enter Your Password Here',
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
 			'ipFilters'=>array('127.0.0.1','::1'),
 		),
-		*/
+		'user' => array(
+            'debug' => false,
+            'userTable' => 'mshop_user',
+            'translationTable' => 'mshop_translation',
+        ),
+        'usergroup' => array(
+            'usergroupTable' => 'mshop_usergroup',
+            'usergroupMessageTable' => 'mshop_user_group_message',
+        ),
+        'membership' => array(
+            'membershipTable' => 'mshop_membership',
+            'paymentTable' => 'mshop_payment',
+        ),
+        'friendship' => array(
+            'friendshipTable' => 'mshop_friendship',
+        ),
+        'profile' => array(
+            'privacySettingTable' => 'mshop_privacysetting',
+            //'profileFieldTable' => 'mshop_profile_field',
+            'profileTable' => 'mshop_profile',
+            'profileCommentTable' => 'mshop_profile_comment',
+            'profileVisitTable' => 'mshop_profile_visit',
+        ),
+        'role' => array(
+            'roleTable' => 'mshop_role',
+            'userRoleTable' => 'mshop_user_role',
+            'actionTable' => 'mshop_action',
+            'permissionTable' => 'mshop_permission',
+        ),
+        'message' => array(
+            'messageTable' => 'mshop_message',
+        ),
 	),
 
 	// application components
 	'components'=>array(
 		'user'=>array(
+			'class'=>'application.modules.user.components.YumWebUser',
+			'loginUrl'=>array('//user/user/login'),
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
 		),
 		// uncomment the following to enable URLs in path-format
-		/*
+
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'rules'=>array(
@@ -46,20 +78,24 @@ return array(
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),
 		),
-		*/
+
+		'cache' => array('class' => 'system.caching.CDummyCache'),
+		/*
 		'db'=>array(
 			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
 		),
+		*/
 		// uncomment the following to use a MySQL database
-		/*
+
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=testdrive',
+			'connectionString' => 'mysql:host=localhost;dbname=mshop',
 			'emulatePrepare' => true,
 			'username' => 'root',
 			'password' => '',
 			'charset' => 'utf8',
+			'tablePrefix' => 'mshop_',
 		),
-		*/
+
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
@@ -72,11 +108,9 @@ return array(
 					'levels'=>'error, warning',
 				),
 				// uncomment the following to show log messages on web pages
-				/*
 				array(
 					'class'=>'CWebLogRoute',
 				),
-				*/
 			),
 		),
 	),
