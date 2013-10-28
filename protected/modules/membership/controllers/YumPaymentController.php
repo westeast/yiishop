@@ -1,4 +1,4 @@
-<?php
+<?
 
 Yii::import('application.modules.user.controllers.YumController');
 Yii::import('application.modules.user.models.*');
@@ -18,7 +18,7 @@ class YumPaymentController extends YumController {
 					),
 				array('allow', 
 					'actions'=>array('admin','delete'),
-					'expression' => 'Yii::app()->user->isAdmin()',
+					'users'=>array('admin'),
 					),
 				array('deny', 
 					'users'=>array('*'),

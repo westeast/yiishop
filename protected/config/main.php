@@ -30,38 +30,38 @@ return array(
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
 			'ipFilters'=>array('127.0.0.1','::1'),
 		),
-		'user' => array(
-            'debug' => false,
-            'userTable' => 'mshop_user',
-            'translationTable' => 'mshop_translation',
-        ),
-        'usergroup' => array(
-            'usergroupTable' => 'mshop_usergroup',
-            'usergroupMessageTable' => 'mshop_user_group_message',
-        ),
-        'membership' => array(
-            'membershipTable' => 'mshop_membership',
-            'paymentTable' => 'mshop_payment',
-        ),
-        'friendship' => array(
-            'friendshipTable' => 'mshop_friendship',
-        ),
-        'profile' => array(
-            'privacySettingTable' => 'mshop_privacysetting',
-            //'profileFieldTable' => 'mshop_profile_field',
-            'profileTable' => 'mshop_profile',
-            'profileCommentTable' => 'mshop_profile_comment',
-            'profileVisitTable' => 'mshop_profile_visit',
-        ),
-        'role' => array(
-            'roleTable' => 'mshop_role',
-            'userRoleTable' => 'mshop_user_role',
-            'actionTable' => 'mshop_action',
-            'permissionTable' => 'mshop_permission',
-        ),
-        'message' => array(
-            'messageTable' => 'mshop_message',
-        ),
+		'user' => array (
+				'debug' => false,
+				'userTable' => 'mshop_user',
+				'translationTable' => 'mshop_translation'
+				),
+		'usergroup' => array (
+				'usergroupTable' => 'mshop_usergroup',
+				'usergroupMessageTable' => 'mshop_user_group_message'
+		),
+		'membership' => array (
+				'membershipTable' => 'mshop_membership',
+				'paymentTable' => 'mshop_payment'
+		),
+		'friendship' => array (
+				'friendshipTable' => 'mshop_friendship'
+		),
+		'profile' => array (
+				'privacySettingTable' => 'mshop_privacysetting',
+				'profileFieldTable' => 'mshop_profile_field',
+				'profileTable' => 'mshop_profile',
+				'profileCommentTable' => 'mshop_profile_comment',
+				'profileVisitTable' => 'mshop_profile_visit'
+		),
+		'role' => array (
+				'roleTable' => 'mshop_role',
+				'userRoleTable' => 'mshop_user_role',
+				'actionTable' => 'mshop_action',
+				'permissionTable' => 'mshop_permission'
+		),
+		'message' => array (
+				'messageTable' => 'mshop_message'
+		),
 	),
 
 	// application components

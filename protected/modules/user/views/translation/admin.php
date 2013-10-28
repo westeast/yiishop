@@ -1,11 +1,11 @@
-<?php
+<?
 $this->breadcrumbs=array(
 		Yum::t('Translation')=>array('admin'),
 		Yum::t('Manage'),
 		);
 ?>
 
-<h1><?php echo Yum::t('Manage Translations'); ?> </h1>
+<h2><?php echo Yum::t('Manage Translations'); ?> </h2>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 			'id'=>'category-grid',

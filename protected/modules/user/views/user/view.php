@@ -15,18 +15,25 @@ echo Yum::renderFlash();
 if(Yii::app()->user->isAdmin()) {
 	$attributes = array(
 			'id',
-			);
+	);
 
 	if(!Yum::module()->loginType & UserModule::LOGIN_BY_EMAIL)
 		$attributes[] = 'username';
 
-	if($profiles && $model->profile) 
-		foreach(YumProfile::getProfileFields() as $field) 
-			array_push($attributes, array(
-						'label' => Yum::t($field),
-						'type' => 'raw',
-						'value' => $model->profile->getAttribute($field)
-						));
+	if($profiles) {
+		$profileFields = YumProfileField::model()->forOwner()->findAll();
+		if ($profileFields && $model->profile) {
+			foreach($profileFields as $field) {
+				array_push($attributes, array(
+							'label' => Yum::t($field->title),
+							'type' => 'raw',
+							'value' => is_array($model->profile)
+							? $model->profile->getAttribute($field->varname)
+							: $model->profile->getAttribute($field->varname) ,
+							));
+			}
+		}
+	}
 
 	array_push($attributes,
 		/*
@@ -69,13 +76,13 @@ if(Yii::app()->user->isAdmin()) {
 			);
 
 	if($profiles) {
-		$profileFields = YumProfile::getProfileFields();
+		$profileFields = YumProfileField::model()->forAll()->findAll();
 		if ($profileFields) {
 			foreach($profileFields as $field) {
 				array_push($attributes,array(
-							'label' => Yum::t($field),
-							'name' => $field,
-							'value' => $model->profile->getAttribute($field),
+							'label' => Yii::t('UserModule.user', $field->title),
+							'name' => $field->varname,
+							'value' => $model->profile->getAttribute($field->varname),
 							));
 			}
 		}
@@ -115,21 +122,15 @@ if(Yum::hasModule('role') && Yii::app()->user->isAdmin()) {
 	}
 }
 
-if(Yii::app()->user->isAdmin()) {
-	echo CHtml::link(Yum::t('User administration'), 
-			array('//user/user/admin'), array(
-				'class' => 'btn'));
+if(Yii::app()->user->isAdmin())
+	echo CHtml::Button(
+			Yum::t('Update User'), array(
+				'submit' => array('user/update', 'id' => $model->id)));
 
-	echo CHtml::link(Yum::t('Update User'), 
-			array('user/update', 'id' => $model->id), array(
-				'class' => 'btn'));
-
-}
-
-if(Yum::hasModule('profile'))
-echo CHtml::link(Yum::t('Visit profile'), array(
-			'//profile/profile/view', 'id' => $model->id), array(
-'class' => 'btn'));
+	if(Yum::hasModule('profile'))
+	echo CHtml::Button(
+			Yum::t('Visit profile'), array(
+				'submit' => array('//profile/profile/view', 'id' => $model->id)));
 
 
 	?>

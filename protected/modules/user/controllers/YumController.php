@@ -1,16 +1,13 @@
-<?php
+<?
 /**
- * Base controller class that contains commonly used Controller functions.
- * Also checks if yum is installed properly at each request.
- * All yii user management core classes should inherit from this class.
- *
- * @author thyseus@gmail.com
+ * Base controller class
  * @author tomasz.suchanek
  * @since 0.6
  * @package Yum.core
+ *
  */
 
-abstract class YumController extends Controller {
+abstract class YumController extends CController {
 	public $breadcrumbs = array();
 	public $menu = array();
 	public $title ='';
@@ -26,10 +23,6 @@ abstract class YumController extends Controller {
 	public function beforeAction($action) {
 		if(Yum::module()->enableOnlineStatus && !Yii::app()->user->isGuest)
 			Yii::app()->user->data()->setLastAction();
-
-		if(Yum::module()->enableBootstrap)
-			Yum::register('css/bootstrap.min.css');
-
 
 		return parent::beforeAction($action);
 	}

@@ -1,7 +1,3 @@
-<div class="container">
-<div class="span12">
-<div class="row">
-
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -104,9 +100,6 @@
 
 </div><!-- form -->
 
-</div>
-</div>
-</div>
 <?php Yii::app()->clientScript->registerScript('type', "
 $('#YumPermission_type_0').click(function() {
 $('#assignment_role').hide();
@@ -117,5 +110,3 @@ $('#assignment_role').show();
 $('#assignment_user').hide();});
 
 ");
-?>
-

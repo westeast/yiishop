@@ -1,4 +1,4 @@
-<?php
+<?
 $this->title = Yum::t('All Profile visits in the system');
 
 $this->breadcrumbs = array(
@@ -19,7 +19,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 					'type' => 'raw',
 					'value' => 'CHtml::link($data->visited->username, array(
 							"/profile/profile/view",
-							"id" => $data->visited->id))'),
+							"id" => $data->visited->profile->id))'),
 				array(
 					'name' => 'timestamp_first_visit',
 					'filter' => false,

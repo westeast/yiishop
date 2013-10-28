@@ -1,4 +1,4 @@
-<?php
+<?
 class YumWebUser extends CWebUser
 {
 	public $_data;
@@ -17,22 +17,15 @@ class YumWebUser extends CWebUser
 
 	public function checkAccess($operation, $params=array(), $allowCaching=true)
 	{
-		if(!Yum::hasModule('role') ||	Yum::module('role')->useYiiCheckAccess)
+		if(!Yum::hasModule('role') ||	Yum::module('role')->useYiiCheckAccess )
 			return parent::checkAccess($operation, $params, $allowCaching);
-		else
-			return $this->can($operation);	
+
+		return $this->can($operation);	
 	}
 
 	public function can($action) {
-		if(!Yum::hasModule('role'))
-			throw new CException(Yum::t('Role module is not activated'));
-
 		Yii::import('application.modules.role.models.*');
-
-		if(Yum::module('role')->adminIsGod && Yii::app()->user->isAdmin())
-			return true;
-
-		foreach($this->data()->getPermissions() as $permission)
+		foreach ($this->data()->getPermissions() as $permission)
 			if ($permission == $action)
 				return true;
 

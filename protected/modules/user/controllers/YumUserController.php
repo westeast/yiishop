@@ -1,4 +1,4 @@
-<?php
+<?
 
 Yii::import('application.modules.user.controllers.YumController');
 class YumUserController extends YumController {
@@ -11,37 +11,20 @@ class YumUserController extends YumController {
 					'users'=>array('*'),
 					),
 				array('allow',
-					'actions'=>array('profile',
-						'logout',
-						'changepassword',
-						'passwordexpired',
-						'delete',
-						'browse'),
+					'actions'=>array('profile', 'logout', 'changepassword', 'passwordexpired', 'delete', 'browse'),
 					'users'=>array('@'),
 					),
 				array('allow',
-					'actions'=>array('admin',
-						'delete',
-						'create',
-						'update',
-						'list',
-						'assign',
-						'generateData',
-						'csv'),
+					'actions'=>array('admin','delete','create','update', 'list', 'assign', 'generateData', 'csv'),
 					'expression' => 'Yii::app()->user->isAdmin()'
 					),
 				array('allow',
-					'actions'=>array('update'),
-					'expression' => 'Yii::app()->user->can("admin-user-update")'
-					),
-
-				array('allow',
 					'actions'=>array('create'),
-					'expression' => 'Yii::app()->user->can("admin-user-create")'
+					'expression' => 'Yii::app()->user->can("user_create")'
 					),
 				array('allow',
 					'actions'=>array('admin'),
-					'expression' => 'Yii::app()->user->can("admin-user")'
+					'expression' => 'Yii::app()->user->can("user_admin")'
 					),
 				array('deny',  // deny all other users
 						'users'=>array('*'),
@@ -57,7 +40,8 @@ class YumUserController extends YumController {
 				$user = new YumUser();
 				$user->username = sprintf('Demo_%d_%d', rand(1, 50000), $i);
 				$user->roles = array($_POST['role']);
-				$user->setPassword ($_POST['password']);
+				$user->salt = YumEncrypt::generateSalt();
+				$user->password = YumEncrypt::encrypt($_POST['password'], $user->salt);
 				$user->createtime = time();
 				$user->status = $_POST['status'];
 
@@ -110,6 +94,8 @@ class YumUserController extends YumController {
 	}
 
 	public function beforeAction($event) {
+		if(!Yii::app()->user instanceof YumWebUser)
+			throw new CException(Yum::t('Please make sure that Yii uses the YumWebUser component instead of CWebUser in your config/main.php components section. Please see the installation instructions.'));
 		if (Yii::app()->user->isAdmin())
 			$this->layout = Yum::module()->adminLayout;
 		else
@@ -136,13 +122,15 @@ class YumUserController extends YumController {
 			$form->attributes = $_POST['YumUserChangePassword'];
 			$form->validate();
 
-			if(!CPasswordHelper::verifyPassword($form->currentPassword,
-						YumUser::model()->findByPk($id)->password))
+			if(!YumEncrypt::validate_password($form->currentPassword,
+						YumUser::model()->findByPk($id)->password,
+						YumUser::model()->findByPk($id)->salt))
 				$form->addError('currentPassword',
 						Yum::t('Your current password is not correct'));
 
 			if(!$form->hasErrors()) {
-				if(YumUser::model()->findByPk($id)->setPassword($form->password)) {
+				if(YumUser::model()->findByPk($id)->setPassword($form->password,
+							YumUser::model()->findByPk($id)->salt)) {
 					Yum::setFlash('The new password has been saved');
 					Yum::log(Yum::t('User {username} has changed his password', array(
 									'{username}' => Yii::app()->user->name)));
@@ -159,11 +147,11 @@ class YumUserController extends YumController {
 		}
 
 		if(Yii::app()->request->isAjaxRequest)
-			$this->renderPartial(Yum::module()->changePasswordView, array(
+			$this->renderPartial('changepassword', array(
 						'form'=>$form,
 						'expired' => $expired));
 		else
-			$this->render(Yum::module()->changePasswordView, array(
+			$this->render('changepassword', array(
 						'form'=>$form,
 						'expired' => $expired));
 	}
@@ -191,118 +179,110 @@ class YumUserController extends YumController {
 	 * Creates a new User.
 	 */
 	public function actionCreate() {
-		$user = new YumUser;
+		$model = new YumUser;
 		if(Yum::hasModule('profile'))
 			$profile = new YumProfile;
 		$passwordform = new YumUserChangePassword;
 
 		// When opening a empty user creation mask, we most probably want to
 		// insert an _active_ user
-		if(!$user->status)
-			$user->status = 1;
+		if(!isset($model->status))
+			$model->status = 1;
 
 		if(isset($_POST['YumUser'])) {
-			$user->attributes=$_POST['YumUser'];
+			$model->salt = YumEncrypt::generateSalt();
+			$model->attributes=$_POST['YumUser'];
+			
+			if(Yum::hasModule('role'))
+				$model->roles = Relation::retrieveValues($_POST);
+
+			if(Yum::hasModule('profile') && isset($_POST['YumProfile']) )
+				$profile->attributes = $_POST['YumProfile'];
 
 			if(isset($_POST['YumUserChangePassword'])) {
 				if($_POST['YumUserChangePassword']['password'] == '') {
-					Yii::import('application.modules.user.components.EPasswordGenerator');
-					$generatorOptions = Yum::module()->passwordGeneratorOptions;
-					$password = EPasswordGenerator::generate(
-							$generatorOptions['length'],
-							$generatorOptions['capitals'],
-							$generatorOptions['numerals'],
-							$generatorOptions['symbols']);
-					$user->setPassword($password);
+					$password = YumUser::generatePassword();
+					$model->setPassword($password, $model->salt);
 					Yum::setFlash(Yum::t('The generated Password is {password}', array(
 									'{password}' => $password)));
 				} else {
 					$passwordform->attributes = $_POST['YumUserChangePassword'];
 
 					if($passwordform->validate())
-						$user->setPassword($_POST['YumUserChangePassword']['password']);
+						$model->setPassword($_POST['YumUserChangePassword']['password'], $model->salt);
 				}
 			}
-			$user->validate();
-			if(Yum::hasModule('profile') && isset($_POST['YumProfile']) )
-				$profile->attributes = $_POST['YumProfile'];
 
-			if(!$user->hasErrors()) {
-				$user->activationKey = CPasswordHelper::hashPassword(
-						microtime() . $user->password, Yum::module()->passwordHashCost);
+			$model->activationKey = YumEncrypt::encrypt(microtime() . $model->password, $model->salt);
 
-				if($user->username == '' && isset($profile))
-					$user->username = $profile->email;
+			if($model->username == '' && isset($profile))
+				$model->username = $profile->email;
 
-				if(isset($profile))
-					$profile->validate();
+			$model->validate();
 
-				if(!$user->hasErrors() && !$passwordform->hasErrors()) {
-					$user->save();
+			if(isset($profile))
+				$profile->validate();
 
-					if(isset($_POST['YumUser']['roles']))
-						$user->syncRoles($_POST['YumUser']['roles']);
-					else
-						$user->syncRoles();
-
-					if(isset($profile)) {
-						$profile->user_id = $user->id;
-						$profile->save(array('user_id'), false);
-					}
-					$this->redirect(array('view', 'id'=>$user->id));
+			if(!$model->hasErrors()
+					&& !$passwordform->hasErrors()) {
+				$model->save();
+				if(isset($profile)) {
+					$profile->user_id = $model->id;
+					$profile->save(array('user_id'), false);
 				}
+				$this->redirect(array('view', 'id'=>$model->id));
 			}
 		}
 
 		$this->render('create',array(
-					'user' => $user,
+					'model' => $model,
 					'passwordform' => $passwordform,
 					'profile' => isset($profile) ? $profile : null,
 					));
 	}
 
-	public function actionUpdate($id) {
-		$user = $this->loadUser($id);
-		$profile = false;
-		if(Yum::hasModule('profile')) 
-			$profile = $user->profile;
+	public function actionUpdate() {
+		$model = $this->loadUser();
 		$passwordform = new YumUserChangePassword();
 
 		if(isset($_POST['YumUser'])) {
-			$user->attributes = $_POST['YumUser'];
+			if(!isset($model->salt) || empty($model->salt))
+				$model->salt = YumEncrypt::generateSalt();
+			
+			$model->attributes = $_POST['YumUser'];
+			if(Yum::hasModule('role')) {
+				Yii::import('application.modules.role.models.*');
+				// Assign the roles and belonging Users to the model
+				$model->roles = Relation::retrieveValues($_POST);
+			}
 
-			$user->validate();
-			if($profile && isset($_POST['YumProfile']) )
-				$profile->attributes = $_POST['YumProfile'];
+			if(Yum::hasModule('profile')) {
+				$profile = $model->profile;
 
-			if(!$user->hasErrors()) {
-				if(isset($_POST['YumUser']['roles']))
-					$user->syncRoles($_POST['YumUser']['roles']);
-				else
-					$user->syncRoles();
+				if(isset($_POST['YumProfile']) )
+					$profile->attributes = $_POST['YumProfile'];
+			}
 
+			// Password change is requested ?
+			if(isset($_POST['YumUserChangePassword'])
+					&& $_POST['YumUserChangePassword']['password'] != '') {
+				$passwordform->attributes = $_POST['YumUserChangePassword'];
+				if($passwordform->validate())
+					$model->setPassword($_POST['YumUserChangePassword']['password'], $model->salt);
+			}
 
-				// Password change is requested ?
-				if(isset($_POST['YumUserChangePassword'])
-						&& $_POST['YumUserChangePassword']['password'] != '') {
-					$passwordform->attributes = $_POST['YumUserChangePassword'];
-					if($passwordform->validate())
-						$user->setPassword($_POST['YumUserChangePassword']['password']);
-				}
+			if(!$passwordform->hasErrors() && $model->save()) {
+				if(isset($profile)) 
+					$profile->save();
 
-				if(!$passwordform->hasErrors() && $user->save()) {
-					if(isset($profile)) 
-						$profile->save();
-
-					$this->redirect(array('//user/user/view', 'id' => $user->id));
-				}
+				$this->redirect(array('//user/user/view', 'id' => $model->id));
 			}
 		}
 
 		$this->render('update', array(
-					'user'=>$user,
+					'model'=>$model,
 					'passwordform' =>$passwordform,
-					'profile' => $profile, 
+					'profile' => isset($profile) ? $profile : false,
 					));
 	}
 
@@ -328,8 +308,8 @@ class YumUserController extends YumController {
 					$this->redirect('//user/user/admin');
 			}
 		} else if(isset($_POST['confirmPassword'])) {
-			if(CPasswordHelper::verifyPassword($_POST['confirmPassword'],
-						$user->password)) {
+			if(YumEncrypt::validate_password($_POST['confirmPassword'],
+						$user->password, $user->salt)) {
 				if($user->delete()) {
 					Yii::app()->user->logout();
 					$this->actionLogout();
@@ -373,7 +353,8 @@ class YumUserController extends YumController {
 					));
 	}
 
-	public function actionList() {
+	public function actionList()
+	{
 		$dataProvider=new CActiveDataProvider('YumUser', array(
 					'pagination'=>array(
 						/*'criteria'=>array(
@@ -387,7 +368,8 @@ class YumUserController extends YumController {
 					));
 	}
 
-	public function actionAdmin() {
+	public function actionAdmin()
+	{
 		if(Yum::hasModule('role'))
 			Yii::import('application.modules.role.models.*');
 
@@ -398,19 +380,7 @@ class YumUserController extends YumController {
 		if(isset($_GET['YumUser']))
 			$model->attributes = $_GET['YumUser'];
 
-		if(Yum::hasModule('profile')) {
-			Yii::import('application.modules.profile.models.*');
-			$profile = new YumProfile;
-			if(isset($_GET['YumProfile'])) {
-				$profile->attributes = $_GET['YumProfile'];
-				$model->profile = $profile;
-			}
-		}
-
-		$this->render('admin', array(
-					'model'=>$model,
-					'profile'=>isset($profile) ? $profile : false,
-					));
+		$this->render('admin', array('model'=>$model));
 	}
 
 	/**

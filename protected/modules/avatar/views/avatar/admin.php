@@ -10,4 +10,4 @@ $this->widget('zii.widgets.CListView', array(
 	'itemView' => '_view',
 )); ?>
 
-
+<div style="clear:both;"></div>

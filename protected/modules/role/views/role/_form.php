@@ -16,7 +16,7 @@
 <?php echo CHtml::activeLabelEx($model,'description'); ?>
 <?php echo CHtml::activeTextArea($model,'description',array('rows'=>6, 'cols'=>50)); ?>
 <?php echo CHtml::error($model,'description'); ?>
-</div>	
+</div>
 
 
 <?php if(Yum::hasModule('membership')) { ?>
@@ -34,7 +34,7 @@
 <?php echo CHtml::activeTextField($model, 'price'); ?>
 <?php echo CHtml::Error($model, 'price'); ?>
 </div>
-<div class="hint"> 
+<div class="hint">
 <?php echo Yum::t('How expensive is a membership? Set to 0 to disable membership for this role'); ?>
 </div>
 
@@ -43,16 +43,33 @@
 <?php echo CHtml::activeTextField($model, 'duration'); ?>
 <?php echo CHtml::Error($model, 'duration'); ?>
 </div>
-<div class="hint"> 
+<div class="hint">
 <?php echo Yum::t('How many days will the membership be valid after payment?'); ?>
 
 </div>
 <div style="clear: both;"> </div>
 <?php } ?>
 
+<div class="row">
+<?php echo CHtml::label(Yum::t('These users have been assigned to this role'), ''); ?>
+
+<?php
+$this->widget('YumModule.components.Relation', array(
+			'model' => $model,
+			'relation' => 'users',
+			'style' => 'dropdownlist',
+			'fields' => 'username',
+			'htmlOptions' => array(
+				'checkAll' => Yum::t('Choose All'),
+				'template' => '<div style="float:left;margin-right:5px;">{input}</div>{label}'),
+			'showAddButton' => false
+			));
+?>
+</div>
+
 <div class="row buttons">
-<?php echo CHtml::submitButton($model->isNewRecord 
-		? Yum::t('Create role') 
+<?php echo CHtml::submitButton($model->isNewRecord
+		? Yum::t('Create role')
 		: Yum::t('Save role')); ?>
 </div>
 

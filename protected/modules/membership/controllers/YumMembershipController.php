@@ -1,4 +1,4 @@
-<?php
+<?
 Yii::import('application.modules.user.controllers.YumController');
 Yii::import('application.modules.user.models.Yum');
 Yii::import('application.modules.role.models.*');
@@ -15,7 +15,7 @@ class YumMembershipController extends YumController {
 					),
 				array('allow', 
 					'actions'=>array('admin','delete', 'update', 'view', 'orders'),
-					'expression' => 'Yii::app()->user->isAdmin()',
+					'users'=>array('admin'),
 					),
 				array('deny', 
 					'users'=>array('*'),

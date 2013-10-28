@@ -1,4 +1,4 @@
-<?php
+<?
 Yii::import('application.modules.user.models.*');
 
 /**
@@ -105,7 +105,6 @@ class YumMessage extends YumActiveRecord
 
 		$message->title = $subject;
 		$message->message = $body;
-		$message->message_read = 0;
 
 		return $message->save();
 	}

@@ -4,3 +4,4 @@
 <h3> <?php echo CHtml::link($data->username, array(
 			'//avatar/avatar/editAvatar', 'id' => $data->id)); ?> </h3>
 </div>
+
