@@ -11,7 +11,9 @@ class UserModule extends CWebModule {
 	public $debug = false;
 
 	//layout related control vars
-	public $baseLayout = 'application.views.layouts.main';
+// 	public $baseLayout = 'application.views.layouts.main';
+	public $baseLayout = 'webroot.themes.bootstrap.views.layouts.main';
+
 	public $layout = 'application.modules.user.views.layouts.yum';
 	public $loginLayout = 'application.modules.user.views.layouts.yum';
 	public $adminLayout = 'application.modules.user.views.layouts.yum';
@@ -28,7 +30,7 @@ class UserModule extends CWebModule {
   // for example, demo and Demo would be the same user then
 	public $caseSensitiveUsers = true;
 
-	// set this to true if you do want to access data through a REST api. 
+	// set this to true if you do want to access data through a REST api.
 	// Disabled by default for security reasons.
 	public $enableRESTapi = false;
 
@@ -41,9 +43,9 @@ class UserModule extends CWebModule {
 	public $activationPasswordSet = false;
 	public $autoLogin = false;
 
-	// set to swift to active emailing by swiftMailer or 
+	// set to swift to active emailing by swiftMailer or
 	// PHPMailer to use PHPMailer as emailing lib.
-	public $mailer = 'yum'; 
+	public $mailer = 'yum';
 	public $phpmailer = null; // PHPMailer array options.
 	public $adminEmail = 'admin@example.com';
 
@@ -56,12 +58,12 @@ class UserModule extends CWebModule {
   public $rteadapter = false; // Don't use an Adapter
 
 	public $customCsvExportCriteria = '1';
-	
+
 	// valid callback function that executes after user login
 	public $afterLogin = false;
 
 	// Set this to true to really remove users instead of setting the status
-	// to -2 (YumUser::REMOVED)	
+	// to -2 (YumUser::REMOVED)
 	// Handle with care. User and Profile will get removed physically from the db.
 	public $trulyDelete = false;
 
