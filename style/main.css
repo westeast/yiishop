@@ -1,0 +1,49 @@
+body
+{
+	margin: 0;
+	padding: 0;
+	color: #555;
+	font: normal 10pt Arial,Helvetica,sans-serif;
+	background: #EFEFEF;
+}
+.container
+{
+	width:900px;
+	margin:0 auto;
+	padding:20px 50px 0px 50px;
+	border:1px solid #cccccc;
+	margin-top:50px;
+	line-height:20px;
+	font-size:14px;
+}
+.footer
+{
+	border-top:1px solid #ececec;
+	padding:10px 50px;
+	margin:0 auot;
+	text-align:center;
+	margin-top:10px;
+	color:#999999;
+	font-size:12px;
+}
+h1
+{
+	font-family:'微软雅黑';
+}
+h1 span{
+	float:right;
+	font-size:12px;
+	font-weight:normal;
+}
+.productList p
+{
+	clear:both;
+}
+.productList p span
+{
+	float:left;
+	margin:0px 10px;
+}
+.clr{
+	clear:both;
+}

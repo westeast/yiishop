@@ -5,109 +5,117 @@
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
-Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
 return array(
+	// protected 目录的基础路径  
+	// 使用 Yii::app()->basePath 来访问
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'YiiShop',
-	'language' => 'zh_cn',//语言翻译成中文
 
-	// preloading 'log' component
-	'preload'=>array('log'),
+	// 应用的名字  
+	// 使用 Yii::app()->name 来访问
+	'name'=>'Yii Study',
+	// 维护程序时，这样子所有的请求转发到一个地方  
+	// 'catchAllRequest' => array('site/all'),
+
+	// 如何在应用程序处理请求之前执行一段操作？当然这个function方法要存在index.php  
+	// 'onBeginRequest' => 'function',
+  
+	// 预载入的应用组件
+	//'preload'=>array('log'),
 
 	// autoloading model and component classes
+	//模块
+	'modules'=>array(
+	    'gii'=>array(
+	        'class'=>'system.gii.GiiModule',
+	        'password'=>'teddy',
+	        'ipFilters'=>array('127.0.0.1'),
+	    ),
+	    'admin'=>array(),
+	),
+
+	// 自动载入的类
 	'import'=>array(
 		'application.models.*',
-		'application.components.*',
+		'application.components.*'
 	),
 
-	'theme'=>'bootstrap', // requires you to copy the theme under your themes directory
+	// 默认的 controller  
+	'defaultController'=>'home',
 
-	'modules'=>array(
-		// uncomment the following to enable the Gii tool
-		'gii'=>array(
-			'class'=>'system.gii.GiiModule',
-			'password'=>'Enter Your Password Here',
-			// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters'=>array('127.0.0.1','::1'),
-		),
-		'user' => array (
-				'debug' => false,
-				'userTable' => 'mshop_user',
-				'translationTable' => 'mshop_translation'
-				),
-		'usergroup' => array (
-				'usergroupTable' => 'mshop_usergroup',
-				'usergroupMessageTable' => 'mshop_user_group_message'
-		),
-		'membership' => array (
-				'membershipTable' => 'mshop_membership',
-				'paymentTable' => 'mshop_payment'
-		),
-		'friendship' => array (
-				'friendshipTable' => 'mshop_friendship'
-		),
-		'profile' => array (
-				'privacySettingTable' => 'mshop_privacysetting',
-				'profileFieldTable' => 'mshop_profile_field',
-				'profileTable' => 'mshop_profile',
-				'profileCommentTable' => 'mshop_profile_comment',
-				'profileVisitTable' => 'mshop_profile_visit'
-		),
-		'role' => array (
-				'roleTable' => 'mshop_role',
-				'userRoleTable' => 'mshop_user_role',
-				'actionTable' => 'mshop_action',
-				'permissionTable' => 'mshop_permission'
-		),
-		'message' => array (
-				'messageTable' => 'mshop_message'
-		),
-	),
+	// 默认语言
+	'language'=>'zh_cn',
+	// 使用的字符集  
+	'charset' => 'utf-8',
 
-	// application components
+
+	// 应用组件的配置
 	'components'=>array(
+		'authManager' => array(
+            'class' => 'CDbAuthManager', 
+            'connectionID' => 'db',
+            'itemTable'=>'v_auth_item',
+			'assignmentTable'=>'v_auth_assignment',
+			'itemChildTable'=>'v_auth_item_children',
+        ),  
 		'user'=>array(
-			'class'=>'application.modules.user.components.YumWebUser',
-			'loginUrl'=>array('//user/user/login'),
-			// enable cookie-based authentication
+			'class'=>'WebUser',
+			'stateKeyPrefix'=>'member',
+			'loginUrl'=>'/login/',
 			'allowAutoLogin'=>true,
+			'autoRenewCookie'=>true,
 		),
-		// uncomment the following to enable URLs in path-format
-
-		'urlManager'=>array(
-			'urlFormat'=>'path',
-			'showScriptName'=>false,
-			'rules'=>array(
-				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
-				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
-				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
-			),
+		'request'=>array(
+			'enableCsrfValidation'=>true,
+			//'enableCookieValidation' => true,
 		),
-
-		'cache' => array('class' => 'system.caching.CDummyCache'),
-
-		'bootstrap'=>array(
-				'class'=>'bootstrap.components.Bootstrap',
-			),
-		/*
 		'db'=>array(
-			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
-		),
-		*/
-		// uncomment the following to use a MySQL database
-
-		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=mshop',
+			'connectionString' => 'mysql:host=localhost;dbname=daxiong',
 			'emulatePrepare' => true,
 			'username' => 'root',
 			'password' => '',
 			'charset' => 'utf8',
-			'tablePrefix' => 'mshop_',
+			'tablePrefix' => 'v_',
 		),
 
+		'cache' => array(
+        	'class' => 'system.caching.CFileCache',
+        	/*
+			'servers' => array(
+            	array('host' => '10.96.190.80', 'port' => 11211),
+			),
+			*/
+        ),
+
+		'session' => array(
+            'class' => 'system.web.CDbHttpSession',
+            'connectionID' => 'db',
+            'sessionName' => 'LUCSID',
+            'sessionTableName' => 'v_session',
+            'timeout' => '3600',
+            'cookieMode' => 'allow',
+            'cookieParams' => array(
+                'lifetime' => '3600',
+                'path' => '/',
+                'domain' => '.yii.com',
+                'httpOnly' => true),
+        ),
+
+		/*
 		'errorHandler'=>array(
-			// use 'site/error' action to display errors
-			'errorAction'=>'site/error',
+			// use 'home/error' action to display errors
+			'errorAction'=>'/home/error',
+		),
+		*/
+		'urlManager'=>array(
+			'urlFormat'=>'path',
+			'showScriptName'=>false,
+			'urlSuffix' => '.html',
+            'caseSensitive' => true,
+			'rules'=>array(
+				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
+          		'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
+         		'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
+			),
 		),
 		'log'=>array(
 			'class'=>'CLogRouter',
@@ -126,8 +134,5 @@ return array(
 
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
-	'params'=>array(
-		// this is used in contact page
-		'adminEmail'=>'webmaster@example.com',
-	),
+	'params'=>require(dirname(__FILE__).'/params.php'),
 );
