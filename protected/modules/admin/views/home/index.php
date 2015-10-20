@@ -9,10 +9,10 @@
 <?php Yii::app()->getClientScript()->registerCssFile("/style/admin/admin.css");?>
 </head>
 <frameset rows="72,*" cols="*" frameborder="0" border="0" framespacing="0">
-	<frame src="/admin/home/header.html" frameborder="0" name="headFrame" scrolling="no" noresize>
+	<frame src="index.php?r=admin/home/header" frameborder="0" name="headFrame" scrolling="no" noresize>
 	<frameset cols="191,*" frameborder="0" border="0" framespacing="0">
-		<frame src="/admin/home/sidebar.html" frameborder="0" name="sidebarFrame" scrolling="no" noresize>
-		<frame src="/admin/home/content.html" frameborder="0" name="contentFrame">
+		<frame src="index.php?r=admin/home/sidebar" frameborder="0" name="sidebarFrame" scrolling="no" noresize>
+		<frame src="index.php?r=admin/home/content" frameborder="0" name="contentFrame">
 	</frameset>
 	<noframes>
 	<body>

@@ -10,7 +10,7 @@ $(function(){
 		var index = $(".nav li").index(this);
 		$(".nav li").removeClass("current");
 		$(this).addClass("current");
-		self.parent.contentFrame.location="/admin/"+$(this).attr("com");
+		self.parent.contentFrame.location="index.php?r=admin/"+$(this).attr("com");
 		self.parent.sidebarFrame.changeSubMenu(index,$(this).attr("com"));
 	});
 
@@ -26,7 +26,7 @@ $(function(){
 	//登出
 	$(".logout").click(function(){
 		if (window.confirm("您确定要退出吗？")){
-			parent.location.replace('/admin/manage/logout.html');
+			parent.location.replace('index.php?r=admin/manage/logout');
 		}
 	});
 
