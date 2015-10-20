@@ -20,6 +20,7 @@ apache 主机配置
 
 
 
+
 <VirtualHost *:80>
 DocumentRoot "D:\wamp\www\yiishop"
 ServerName yii.com
