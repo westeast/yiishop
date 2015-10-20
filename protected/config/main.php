@@ -69,10 +69,10 @@ return array(
 			//'enableCookieValidation' => true,
 		),
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=daxiong',
+			'connectionString' => 'mysql:host=localhost;dbname=yiishop',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => '',
+			'password' => 'admin888',
 			'charset' => 'utf8',
 			'tablePrefix' => 'v_',
 		),
@@ -106,6 +106,8 @@ return array(
 			'errorAction'=>'/home/error',
 		),
 		*/
+
+		/*
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'showScriptName'=>false,
@@ -117,6 +119,8 @@ return array(
          		'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),
 		),
+		*/
+
 		'log'=>array(
 			'class'=>'CLogRouter',
 			'routes'=>array(
