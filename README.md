@@ -11,6 +11,8 @@ yiishop a multiuser mall like tmall and jd
 1，配置xxxx.com  虚拟域名
 
 现在只有后台，后台登录地址：http://xxxx.com/admin/manage/login
+现在都是用下面的地址来的 服务器只需能访问index.php即可。
+http://yii.com/index.php?r=admin/manage/login
 
 
 账号 admin 密码admin1234
